@@ -48,3 +48,52 @@ The architecture is built using robust, scalable, and industry-standard technolo
 
 ## 🗺 System Architecture
 
+
+```mermaid
+graph LR
+    %% Frontend Node
+    Angular[Citizen App / Angular]
+    
+    %% Backend Node
+    SpringBoot[API Gateway / Spring Boot]
+    
+    %% Storage & Database Nodes
+    PostgreSQL[(PostgreSQL Database)]
+    S3[Amazon S3 Storage]
+    OpenAI[OpenAI GPT-4o Vision API]
+
+    %% Connections
+    Angular --> SpringBoot
+    SpringBoot --> PostgreSQL
+    SpringBoot --> S3
+    SpringBoot --> OpenAI
+
+    %% Custom Styling
+    style Angular fill:#dd0031,stroke:#333,stroke-width:2px,color:#fff
+    style SpringBoot fill:#6db33f,stroke:#333,stroke-width:2px,color:#fff
+    style PostgreSQL fill:#336791,stroke:#333,stroke-width:2px,color:#fff
+    style S3 fill:#ff9900,stroke:#333,stroke-width:2px,color:#fff
+    style OpenAI fill:#412991,stroke:#333,stroke-width:2px,color:#fff
+```
+
+---
+## 🚀 Getting Started & Next Steps
+
+This repository marks the initial phase of the Vadhuvai system. The implementation roadmap is split as follows:
+
+*   **Phase 1:** Citizen onboarding, document upload workflows, and OpenAI-driven OCR verification.
+*   **Phase 2:** SRO Admin Dashboard with real-time application auditing tools.
+*   **Phase 3:** Cryptographic PDF generation for digital certificates and payment gateway integration.
+
+---
+
+## 🤝 Contributing
+
+As an open-source initiative aimed at updating public digital infrastructure, contributions from developers, UI/UX designers, and tech-policy enthusiasts are highly welcome!
+
+1.  **Fork** the repository.
+2.  Create your feature branch (`git checkout -b feature/AmazingFeature`).
+3.  Commit your changes (`git commit -m 'Add some AmazingFeature'`).
+4.  Push to the branch (`git push origin feature/AmazingFeature`).
+5.  Open a **Pull Request**.
+
