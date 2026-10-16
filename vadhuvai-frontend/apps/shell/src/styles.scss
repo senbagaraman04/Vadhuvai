@@ -1,1 +1,35 @@
 /* You can add global styles to this file, and also import other style files */
+// 1. Font Family Overrides
+$font-family-sans-serif: 'Inter', 'Noto Sans Tamil', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+
+// 2. Custom Brand Colors
+$imperial-indigo: #4F46E5;
+$royal-navy:      #1E1B4B;
+$emerald-green:   #059669;
+$crimson-red:     #DC2626;
+$amber-gold:      #D97706;
+$slate-bg:        #F8FAFC;
+$dark-slate:      #0F172A;
+
+// 3. Bootstrap Theme Variable Overrides
+$primary:       $imperial-indigo;
+$secondary:     $royal-navy;
+$success:       $emerald-green;
+$danger:        $crimson-red;
+$warning:       $amber-gold;
+$body-bg:       $slate-bg;
+$body-color:    $dark-slate;
+
+// 4. Component Styling Overrides
+$border-radius:          0.5rem;   // Smooth modern corners for inputs & buttons
+$btn-font-weight:        600;      // Semi-bold action buttons
+$input-border-color:     #CBD5E1;  // Crisp input outline
+$input-focus-border-color: $imperial-indigo;
+
+// 5. Import Bootstrap SASS
+@import "bootstrap/scss/bootstrap";
+
+// Custom Utility Class for Top Navbar Background
+.bg-navy {
+  background-color: $royal-navy !important;
+}
