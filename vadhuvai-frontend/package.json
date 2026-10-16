@@ -3,7 +3,9 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
-    "start": "nx run-many -t serve -p shell citizen-portal --parallel=2 --tui=false"
+    "start": "nx run-many -t serve -p shell citizen-portal --parallel=2 --tui=false",
+    "build": "nx run-many -t build -p shell citizen-portal --configuration=production --tui=false",
+    "test": "nx run-many -t test -p shell citizen-portal --tui=false"
   },
   "engines": {
     "node": ">=24.16.0",

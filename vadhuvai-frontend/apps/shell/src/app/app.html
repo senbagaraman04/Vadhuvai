@@ -1,7 +1,15 @@
-<header>
-	<a routerLink="/" class="brand">Vadhuvai</a>
-	<nav aria-label="Main navigation">
-		<a routerLink="/citizen-portal" routerLinkActive="active">Citizen Portal</a>
-	</nav>
+<header class="site-header">
+    <div class="page-width header-inner">
+        <a routerLink="/" class="brand">Vadhuvai <span lang="ta">வதுவை</span></a>
+        <span class="header-note">Open-source civic infrastructure</span>
+    </div>
 </header>
-<main><router-outlet></router-outlet></main>
+
+<main class="page-width">
+    <router-outlet></router-outlet>
+</main>
+
+<footer class="page-width site-footer">
+    <span>Vadhuvai &mdash; <span lang="ta">வதுவை</span></span>
+    <span>In development. Not yet available for registrations.</span>
+</footer>
