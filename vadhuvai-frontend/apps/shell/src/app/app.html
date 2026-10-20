@@ -1,15 +1,15 @@
-<header class="site-header">
-    <div class="page-width header-inner">
-        <a routerLink="/" class="brand">Vadhuvai <span lang="ta">வதுவை</span></a>
-        <span class="header-note">Open-source civic infrastructure</span>
+<header class="bg-navy text-white py-4">
+    <div class="container d-flex align-items-center justify-content-between gap-3">
+        <a routerLink="/" class="brand text-white text-decoration-none">Vadhuvai <span class="ms-3 ps-3 border-start border-white border-opacity-25" lang="ta">வதுவை</span></a>
+        <span class="small text-uppercase text-white-50 d-none d-md-inline">Open-source civic infrastructure</span>
     </div>
 </header>
 
-<main class="page-width">
+<main class="container flex-grow-1">
     <router-outlet></router-outlet>
 </main>
 
-<footer class="page-width site-footer">
+<footer class="container d-flex flex-wrap justify-content-between gap-3 py-4 small">
     <span>Vadhuvai &mdash; <span lang="ta">வதுவை</span></span>
     <span>In development. Not yet available for registrations.</span>
 </footer>
