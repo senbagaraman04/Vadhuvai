@@ -2,9 +2,6 @@ import { withNativeFederation, shareAll } from '@angular-architects/native-feder
 
 export default withNativeFederation({
   name: 'citizen-portal',
-
-
-
   exposes: {
     './Routes': './apps/citizen-portal/src/app/app.routes.ts',
   },

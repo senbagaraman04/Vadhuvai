@@ -1,5 +1,5 @@
-import { Route } from '@angular/router';
 import { loadRemoteModule } from '@angular-architects/native-federation';
+import { Route } from '@angular/router';
 
 export const appRoutes: Route[] = [
 	{
@@ -7,9 +7,9 @@ export const appRoutes: Route[] = [
 		pathMatch: 'full',
 		loadComponent: () => import('./landing').then((module) => module.Landing),
 	},
-	{
-		path: 'citizen-portal',
-		loadChildren: () =>
-			loadRemoteModule('citizen-portal', './Routes').then((module) => module.appRoutes),
-	},
+{
+    path: 'citizen',
+    loadChildren: () =>
+      loadRemoteModule('citizen-portal', './Routes').then((m) => m.routes),
+  },
 ];
