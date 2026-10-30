@@ -1,6 +1,8 @@
 {
   "extends": "./tsconfig.app.json",
   "files": [
+    "../../shared/ui/src/index.ts",
+    "../../shared/util-models/src/index.ts",
     "src/app/app.routes.ts"
   ],
   "include": [

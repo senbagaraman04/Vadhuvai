@@ -1,0 +1,63 @@
+@use '../../../../../../shared/ui/src/lib/styles/tokens' as t;
+
+:host {
+  display: block;
+}
+
+.panel {
+  @include t.card-panel;
+}
+
+.qr-placeholder {
+  height: 140px;
+  border: 2px dashed #cbd5e1;
+  border-radius: 0.5rem;
+  background: #f8fafc;
+}
+
+.timeline {
+  position: relative;
+  padding-left: 1.5rem;
+
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0.4rem;
+    top: 0.5rem;
+    bottom: 0.5rem;
+    width: 2px;
+    background: #e2e8f0;
+  }
+}
+
+.timeline-item {
+  position: relative;
+  padding-bottom: 1.25rem;
+
+  &::before {
+    content: '';
+    position: absolute;
+    left: -1.5rem;
+    top: 0.25rem;
+    width: 0.9rem;
+    height: 0.9rem;
+    border-radius: 50%;
+    background: #fff;
+    border: 2px solid t.$vadhuvai-slate;
+  }
+
+  &.done::before {
+    background: t.$vadhuvai-emerald;
+    border-color: t.$vadhuvai-emerald;
+  }
+}
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+
+  .panel {
+    box-shadow: none;
+  }
+}

@@ -1,0 +1,110 @@
+<section class="status-page">
+  <vadhuvai-stepper
+    [steps]="steps"
+    [activeIndex]="4"
+    class="d-block mb-4 no-print"
+  />
+
+  <div
+    class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4"
+  >
+    <div>
+      <h1 class="h4 fw-semibold mb-1">Application status</h1>
+      @if (store.applicationId(); as id) {
+      <p class="text-secondary mb-0">
+        Application ID <span class="fw-semibold">{{ id }}</span>
+      </p>
+      }
+    </div>
+    <vadhuvai-status-badge [status]="store.status()" />
+  </div>
+
+  <div class="row g-4">
+    <div class="col-lg-7">
+      @if (store.appointment(); as appointment) {
+      <div class="panel pass-card p-4 mb-4">
+        <div class="d-flex justify-content-between align-items-start mb-3">
+          <div>
+            <div class="small text-uppercase text-secondary fw-semibold">
+              Sub-Registrar appointment pass
+            </div>
+            <h2 class="h5 fw-semibold mb-0">{{ appointment.officeName }}</h2>
+          </div>
+          <span class="badge text-bg-success">Confirmed</span>
+        </div>
+
+        <dl class="row mb-0">
+          <dt class="col-sm-5 text-secondary fw-normal">Application ID</dt>
+          <dd class="col-sm-7 fw-semibold">{{ appointment.applicationId }}</dd>
+
+          <dt class="col-sm-5 text-secondary fw-normal">Office address</dt>
+          <dd class="col-sm-7">{{ appointment.officeAddress }}</dd>
+
+          <dt class="col-sm-5 text-secondary fw-normal">Appointment date</dt>
+          <dd class="col-sm-7">
+            {{ appointment.appointmentDate | date: 'dd MMM yyyy' }}
+          </dd>
+
+          <dt class="col-sm-5 text-secondary fw-normal">Time slot</dt>
+          <dd class="col-sm-7">{{ appointment.timeSlot }}</dd>
+
+          <dt class="col-sm-5 text-secondary fw-normal">Gate entry code</dt>
+          <dd class="col-sm-7 fw-semibold font-monospace">
+            {{ appointment.gateEntryCode }}
+          </dd>
+
+          @if (store.receipt(); as receipt) {
+          <dt class="col-sm-5 text-secondary fw-normal">Transaction ID</dt>
+          <dd class="col-sm-7 font-monospace">{{ receipt.transactionId }}</dd>
+          }
+        </dl>
+
+        <div
+          class="qr-placeholder d-flex align-items-center justify-content-center mt-4"
+          aria-label="QR code placeholder"
+        >
+          <span class="small text-secondary">QR code</span>
+        </div>
+
+        <button
+          type="button"
+          class="btn btn-outline-primary w-100 mt-4 no-print"
+          (click)="downloadReceipt()"
+        >
+          Download PDF receipt
+        </button>
+      </div>
+      } @else {
+      <div class="panel p-4 mb-4 text-center">
+        <h2 class="h5 fw-semibold mb-2">No appointment yet</h2>
+        <p class="text-secondary mb-3">
+          Complete the fee payment to receive your SRO appointment pass.
+        </p>
+        <a routerLink="/citizen/payment" class="btn btn-primary"
+          >Go to payment</a
+        >
+      </div>
+      }
+    </div>
+
+    <div class="col-lg-5">
+      <div class="panel p-4 mb-4">
+        <h2 class="h6 fw-semibold mb-3">Progress timeline</h2>
+        <ol class="timeline list-unstyled mb-0">
+          @for (row of timelineRows(); track row.id) {
+          <li class="timeline-item" [class.done]="row.timestamp">
+            <div class="fw-semibold">{{ row.label }}</div>
+            @if (row.timestamp; as timestamp) {
+            <div class="small text-secondary">
+              {{ timestamp | date: 'dd MMM yyyy, h:mm a' }}
+            </div>
+            } @else {
+            <div class="small text-secondary">Pending</div>
+            }
+          </li>
+          }
+        </ol>
+      </div>
+    </div>
+  </div>
+</section>

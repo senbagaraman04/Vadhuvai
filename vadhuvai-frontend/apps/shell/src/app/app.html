@@ -1,15 +1,7 @@
-<header class="bg-navy text-white py-4">
-    <div class="container d-flex align-items-center justify-content-between gap-3">
-        <a routerLink="/" class="brand text-white text-decoration-none">Vadhuvai <span class="ms-3 ps-3 border-start border-white border-opacity-25" lang="ta">வதுவை</span></a>
-        <span class="small text-uppercase text-white-50 d-none d-md-inline">Open-source civic infrastructure</span>
-    </div>
-</header>
+<vadhuvai-header [language]="language()" (languageChange)="language.set($event)" />
 
-<main class="container flex-grow-1">
+<main class="container flex-grow-1 py-4 py-md-5">
     <router-outlet></router-outlet>
 </main>
 
-<footer class="container d-flex flex-wrap justify-content-between gap-3 py-4 small">
-    <span>Vadhuvai &mdash; <span lang="ta">வதுவை</span></span>
-    <span>In development. Not yet available for registrations.</span>
-</footer>
+<vadhuvai-footer />

@@ -1,0 +1,46 @@
+:host {
+    display: inline-block;
+}
+
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.25rem 0.7rem;
+    border: 1px solid transparent;
+    border-radius: 999px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+}
+
+.status-dot {
+    width: 0.45rem;
+    height: 0.45rem;
+    border-radius: 50%;
+    background: currentColor;
+}
+
+.status-badge[data-tone='amber'] {
+    background: #FEF3C7;
+    border-color: #FCD34D;
+    color: #92400E;
+}
+
+.status-badge[data-tone='emerald'] {
+    background: #D1FAE5;
+    border-color: #6EE7B7;
+    color: #065F46;
+}
+
+.status-badge[data-tone='indigo'] {
+    background: #E0E7FF;
+    border-color: #A5B4FC;
+    color: #3730A3;
+}
+
+.status-badge[data-tone='crimson'] {
+    background: #FEE2E2;
+    border-color: #FCA5A5;
+    color: #991B1B;
+}

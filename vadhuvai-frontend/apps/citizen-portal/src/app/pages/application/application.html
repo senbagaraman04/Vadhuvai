@@ -1,0 +1,172 @@
+<section class="application-page">
+  <vadhuvai-stepper [steps]="steps" [activeIndex]="1" class="d-block mb-4" />
+
+  <div
+    class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4"
+  >
+    <div>
+      <h1 class="h4 fw-semibold mb-1">Marriage registration details</h1>
+      <p class="text-secondary mb-0">
+        Enter the details exactly as they appear on the ID proofs.
+      </p>
+    </div>
+    <vadhuvai-status-badge [status]="store.status()" />
+  </div>
+
+  <form [formGroup]="form" (ngSubmit)="proceed()" novalidate>
+    @for (party of partyKeys; track party) {
+    <div class="panel p-4 mb-4" [formGroupName]="party">
+      <h2 class="h5 fw-semibold mb-3">{{ partyTitles[party] }}</h2>
+      <div class="row g-3">
+        @for (field of partyFields; track field.name) { @let ctrl =
+        control(party, field.name);
+        <div
+          [class.col-12]="field.kind === 'textarea'"
+          [class.col-md-6]="field.kind !== 'textarea'"
+        >
+          <label
+            class="form-label fw-semibold"
+            [attr.for]="party + '-' + field.name"
+            >{{ field.label }}</label
+          >
+
+          @switch (field.kind) { @case ('select') {
+          <select
+            class="form-select"
+            [id]="party + '-' + field.name"
+            [formControlName]="field.name"
+            [class.is-invalid]="ctrl.touched && ctrl.invalid"
+          >
+            <option value="" disabled>Select status</option>
+            @for (option of maritalOptions; track option.value) {
+            <option [value]="option.value">{{ option.label }}</option>
+            }
+          </select>
+          } @case ('textarea') {
+          <textarea
+            rows="2"
+            maxlength="300"
+            class="form-control"
+            [id]="party + '-' + field.name"
+            [formControlName]="field.name"
+            [class.is-invalid]="ctrl.touched && ctrl.invalid"
+          ></textarea>
+          } @case ('date') {
+          <input
+            type="date"
+            class="form-control"
+            [attr.max]="today"
+            [id]="party + '-' + field.name"
+            [formControlName]="field.name"
+            [class.is-invalid]="ctrl.touched && ctrl.invalid"
+          />
+          } @case ('mobile') {
+          <input
+            type="tel"
+            inputmode="numeric"
+            maxlength="10"
+            class="form-control"
+            [id]="party + '-' + field.name"
+            [formControlName]="field.name"
+            [class.is-invalid]="ctrl.touched && ctrl.invalid"
+          />
+          } @default {
+          <input
+            type="text"
+            maxlength="120"
+            class="form-control"
+            [id]="party + '-' + field.name"
+            [formControlName]="field.name"
+            [class.is-invalid]="ctrl.touched && ctrl.invalid"
+          />
+          } } @if (errorOf(ctrl); as error) {
+          <div class="invalid-feedback d-block">{{ error }}</div>
+          }
+        </div>
+        }
+      </div>
+    </div>
+    }
+
+    <div class="panel p-4 mb-4" formGroupName="ceremony">
+      <h2 class="h5 fw-semibold mb-3">Ceremony details</h2>
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label for="marriageDate" class="form-label fw-semibold"
+            >Marriage date</label
+          >
+          <input
+            id="marriageDate"
+            type="date"
+            class="form-control"
+            formControlName="marriageDate"
+            [attr.min]="today"
+            [class.is-invalid]="ceremony.controls.marriageDate.touched && ceremony.controls.marriageDate.invalid"
+          />
+          @if (errorOf(ceremony.controls.marriageDate); as error) {
+          <div class="invalid-feedback d-block">{{ error }}</div>
+          }
+        </div>
+
+        <div class="col-md-6">
+          <label for="sroDistrict" class="form-label fw-semibold"
+            >Sub-Registrar district</label
+          >
+          <select
+            id="sroDistrict"
+            class="form-select"
+            formControlName="sroDistrict"
+            [class.is-invalid]="ceremony.controls.sroDistrict.touched && ceremony.controls.sroDistrict.invalid"
+          >
+            <option value="" disabled>Select district</option>
+            @for (office of sroOffices; track office.code) {
+            <option [value]="office.code">{{ office.officeName }}</option>
+            }
+          </select>
+          @if (errorOf(ceremony.controls.sroDistrict); as error) {
+          <div class="invalid-feedback d-block">{{ error }}</div>
+          }
+        </div>
+
+        <div class="col-12">
+          <label for="venue" class="form-label fw-semibold"
+            >Ceremony venue</label
+          >
+          <textarea
+            id="venue"
+            rows="2"
+            maxlength="200"
+            class="form-control"
+            formControlName="venue"
+            placeholder="Hall or temple name and locality"
+            [class.is-invalid]="ceremony.controls.venue.touched && ceremony.controls.venue.invalid"
+          ></textarea>
+          @if (errorOf(ceremony.controls.venue); as error) {
+          <div class="invalid-feedback d-block">{{ error }}</div>
+          }
+        </div>
+      </div>
+    </div>
+
+    <div
+      class="d-flex flex-wrap justify-content-between align-items-center gap-3"
+    >
+      <div class="small text-secondary">
+        @if (store.draftSavedAt(); as savedAt) { Draft saved at {{ savedAt |
+        date: 'dd MMM yyyy, h:mm a' }} } @else { Draft not saved yet }
+      </div>
+      <div class="d-flex gap-2">
+        <button
+          type="button"
+          class="btn btn-outline-secondary"
+          (click)="saveDraft()"
+        >
+          Save Draft
+        </button>
+        <button type="submit" class="btn btn-primary">
+          Proceed to Documents
+        </button>
+      </div>
+    </div>
+  </form>
+</section>

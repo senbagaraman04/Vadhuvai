@@ -1,0 +1,15 @@
+<nav aria-label="Application progress">
+  <ol class="stepper list-unstyled d-flex mb-0">
+    @for (label of steps(); track label; let i = $index) {
+      <li
+        class="step"
+        [class.is-completed]="stateOf(i) === 'completed'"
+        [class.is-active]="stateOf(i) === 'active'"
+        [attr.aria-current]="stateOf(i) === 'active' ? 'step' : null"
+      >
+        <span class="step-marker">{{ numberOf(i) }}</span>
+        <span class="step-label">{{ label }}</span>
+      </li>
+    }
+  </ol>
+</nav>

@@ -1,0 +1,14 @@
+@use '../styles/tokens' as t;
+
+:host {
+    display: block;
+}
+
+.vadhuvai-footer {
+    background: #fff;
+    color: t.$vadhuvai-ink;
+}
+
+.disclaimer {
+    max-width: 42rem;
+}

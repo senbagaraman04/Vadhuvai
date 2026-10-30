@@ -1,0 +1,121 @@
+<div class="drawer-backdrop" aria-hidden="true" (click)="closed.emit()"></div>
+
+<aside
+  class="drawer d-flex flex-column"
+  role="dialog"
+  aria-modal="true"
+  [attr.aria-label]="'Review OCR: ' + label()"
+>
+  <header
+    class="d-flex justify-content-between align-items-center p-3 border-bottom"
+  >
+    <div>
+      <h2 class="h5 fw-semibold mb-0">Review OCR</h2>
+      <div class="small text-secondary">{{ label() }}</div>
+    </div>
+    <button
+      type="button"
+      class="btn-close"
+      aria-label="Close"
+      (click)="closed.emit()"
+    ></button>
+  </header>
+
+  <div class="drawer-body d-flex flex-column flex-lg-row gap-3 p-3">
+    <section class="preview-pane flex-fill">
+      @if (preview(); as p) { @if (p.isPdf) {
+      <iframe [src]="p.safeUrl" title="Uploaded document preview"></iframe>
+      } @else {
+      <img [src]="p.url" alt="Uploaded document preview" />
+      } } @else {
+      <div class="text-secondary small">No document uploaded.</div>
+      }
+    </section>
+
+    <section class="extract-pane flex-fill">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <span class="fw-semibold">OCR match</span>
+        <span
+          class="badge"
+          [class.text-bg-success]="passed()"
+          [class.text-bg-warning]="!passed()"
+        >
+          {{ confidence() }}%
+        </span>
+      </div>
+
+      @if (!passed()) {
+      <div class="alert alert-warning small" role="alert">
+        Confidence is below {{ threshold }}%. Check the extracted details
+        against the document and correct them before continuing.
+      </div>
+      }
+
+      <form [formGroup]="form" (ngSubmit)="save()" novalidate>
+        <div class="mb-3">
+          <label for="ocr-name" class="form-label fw-semibold"
+            >Name as per ID</label
+          >
+          <input
+            id="ocr-name"
+            type="text"
+            maxlength="120"
+            class="form-control"
+            formControlName="name"
+            [class.is-invalid]="form.controls.name.touched && form.controls.name.invalid"
+          />
+          @if (errorOf(form.controls.name); as error) {
+          <div class="invalid-feedback d-block">{{ error }}</div>
+          }
+        </div>
+
+        <div class="mb-3">
+          <label for="ocr-dob" class="form-label fw-semibold"
+            >Date of birth</label
+          >
+          <input
+            id="ocr-dob"
+            type="date"
+            class="form-control"
+            formControlName="dateOfBirth"
+            [attr.max]="today"
+            [class.is-invalid]="form.controls.dateOfBirth.touched && form.controls.dateOfBirth.invalid"
+          />
+          @if (errorOf(form.controls.dateOfBirth); as error) {
+          <div class="invalid-feedback d-block">{{ error }}</div>
+          }
+        </div>
+
+        <div class="mb-3">
+          <label for="ocr-address" class="form-label fw-semibold"
+            >Address</label
+          >
+          <textarea
+            id="ocr-address"
+            rows="3"
+            maxlength="300"
+            class="form-control"
+            formControlName="address"
+            [class.is-invalid]="form.controls.address.touched && form.controls.address.invalid"
+          ></textarea>
+          @if (errorOf(form.controls.address); as error) {
+          <div class="invalid-feedback d-block">{{ error }}</div>
+          }
+        </div>
+
+        <div class="d-flex justify-content-end gap-2 mt-4">
+          <button
+            type="button"
+            class="btn btn-outline-secondary"
+            (click)="closed.emit()"
+          >
+            Cancel
+          </button>
+          <button type="submit" class="btn btn-primary">
+            Save and continue
+          </button>
+        </div>
+      </form>
+    </section>
+  </div>
+</aside>

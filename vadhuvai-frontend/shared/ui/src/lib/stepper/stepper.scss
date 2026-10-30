@@ -1,0 +1,69 @@
+@use '../styles/tokens' as t;
+
+:host {
+    display: block;
+}
+
+.step {
+    position: relative;
+    flex: 1 1 0;
+    text-align: center;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: t.$vadhuvai-slate;
+}
+
+.step:not(:first-child)::before {
+    content: '';
+    position: absolute;
+    top: 0.95rem;
+    left: -50%;
+    right: 50%;
+    height: 2px;
+    background: currentColor;
+    opacity: 0.5;
+}
+
+.step-marker {
+    position: relative;
+    z-index: 1;
+    display: inline-flex;
+    width: 1.9rem;
+    height: 1.9rem;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 0.4rem;
+    border: 2px solid currentColor;
+    border-radius: 50%;
+    background: #fff;
+    font-size: 0.75rem;
+}
+
+.step-label {
+    display: none;
+}
+
+@media (min-width: 576px) {
+    .step-label {
+        display: block;
+    }
+}
+
+.is-completed {
+    color: t.$vadhuvai-emerald;
+}
+
+.is-completed .step-marker {
+    background: t.$vadhuvai-emerald;
+    color: #fff;
+}
+
+.is-active {
+    color: t.$vadhuvai-indigo;
+}
+
+.is-active .step-marker {
+    background: t.$vadhuvai-indigo;
+    color: #fff;
+    box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.15);
+}

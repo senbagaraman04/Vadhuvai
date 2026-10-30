@@ -1,0 +1,12 @@
+$vadhuvai-navy: #1E1B4B;
+$vadhuvai-indigo: #4F46E5;
+$vadhuvai-emerald: #059669;
+$vadhuvai-slate: #94A3B8;
+$vadhuvai-ink: #0F172A;
+
+@mixin card-panel {
+  background: #fff;
+  border: 1px solid #E2E8F0;
+  border-radius: 0.75rem;
+  box-shadow: 0 1px 2px rgba($vadhuvai-ink, 0.06);
+}

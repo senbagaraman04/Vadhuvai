@@ -1,0 +1,67 @@
+@use '../styles/tokens' as t;
+
+:host {
+    display: block;
+}
+
+.vadhuvai-header {
+    background: t.$vadhuvai-navy;
+    color: #fff;
+}
+
+.brand {
+    color: #fff;
+}
+
+.brand-logo {
+    width: 44px;
+    height: 44px;
+    border-radius: 0.5rem;
+    background: #fff;
+}
+
+.brand-latin {
+    font: 600 1.35rem/1.1 Georgia, serif;
+}
+
+.brand-tamil {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.brand:focus-visible,
+.lang-option:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: 3px;
+}
+
+.env-tag {
+    gap: 0.5rem;
+    padding: 0.3rem 0.8rem;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 999px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: #E0E7FF;
+}
+
+.env-dot {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+    background: t.$vadhuvai-emerald;
+}
+
+.lang-option {
+    color: #fff;
+    border-color: rgba(255, 255, 255, 0.35);
+    background: transparent;
+}
+
+.lang-option.is-active {
+    background: #fff;
+    border-color: #fff;
+    color: t.$vadhuvai-navy;
+}

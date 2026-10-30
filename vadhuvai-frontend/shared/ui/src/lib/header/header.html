@@ -1,0 +1,40 @@
+<header class="vadhuvai-header">
+  <div class="container d-flex flex-wrap align-items-center justify-content-between gap-3 py-3">
+    <a routerLink="/" class="brand d-flex align-items-center gap-3 text-decoration-none">
+      <span class="brand-logo d-inline-flex align-items-center justify-content-center">
+        <img src="/vadhuvai_logo.png" alt="" width="32" height="32" />
+      </span>
+      <span class="d-flex flex-column">
+        <span class="brand-latin">Vadhuvai</span>
+        <span class="brand-tamil" lang="ta">வதுவை</span>
+      </span>
+    </a>
+
+    <div class="d-flex flex-wrap align-items-center gap-3">
+      <span class="env-tag d-inline-flex align-items-center">
+        <span class="env-dot" aria-hidden="true"></span>{{ environmentLabel() }}
+      </span>
+      <div class="btn-group btn-group-sm" role="group" aria-label="Language">
+        <button
+          type="button"
+          class="btn lang-option"
+          [class.is-active]="language() === 'en'"
+          [attr.aria-pressed]="language() === 'en'"
+          (click)="languageChange.emit('en')"
+        >
+          English
+        </button>
+        <button
+          type="button"
+          class="btn lang-option"
+          lang="ta"
+          [class.is-active]="language() === 'ta'"
+          [attr.aria-pressed]="language() === 'ta'"
+          (click)="languageChange.emit('ta')"
+        >
+          தமிழ்
+        </button>
+      </div>
+    </div>
+  </div>
+</header>

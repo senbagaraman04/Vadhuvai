@@ -1,0 +1,16 @@
+<footer class="vadhuvai-footer border-top">
+  <div class="container d-flex flex-column flex-md-row justify-content-between gap-3 py-4 small">
+    <div class="disclaimer">
+      <p class="fw-semibold mb-1">Government compliance notice</p>
+      <p class="mb-0">{{ disclaimer() }}</p>
+    </div>
+    <div class="d-flex flex-column gap-1 text-md-end">
+      <a [href]="privacyPolicyHref()">Privacy Policy</a>
+      <span>
+        Helpdesk:
+        <a [href]="'mailto:' + contactEmail()">{{ contactEmail() }}</a>
+        &middot; {{ contactPhone() }}
+      </span>
+    </div>
+  </div>
+</footer>

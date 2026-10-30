@@ -1,0 +1,19 @@
+@use '../../../../../../shared/ui/src/lib/styles/tokens' as t;
+
+:host {
+  display: block;
+}
+
+.panel {
+  @include t.card-panel;
+}
+
+.method-option {
+  border: 1px solid #e2e8f0;
+  cursor: pointer;
+
+  &.selected {
+    border-color: t.$vadhuvai-indigo;
+    background: rgba(t.$vadhuvai-indigo, 0.06);
+  }
+}

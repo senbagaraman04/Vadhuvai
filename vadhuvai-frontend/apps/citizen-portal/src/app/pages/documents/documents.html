@@ -1,0 +1,89 @@
+<section class="documents-page">
+  <vadhuvai-stepper [steps]="steps" [activeIndex]="2" class="d-block mb-4" />
+
+  <div class="mb-4">
+    <h1 class="h4 fw-semibold mb-1">Upload supporting documents</h1>
+    <p class="text-secondary mb-0">
+      Upload a clear scan or photo (PDF, JPG or PNG, up to 5 MB). ID proofs are
+      read automatically and must match the application details.
+    </p>
+  </div>
+
+  @for (slot of slots; track slot.kind) { @let doc =
+  store.documents()[slot.kind];
+  <div class="panel p-4 mb-3">
+    <div
+      class="d-flex flex-wrap justify-content-between align-items-start gap-2 mb-3"
+    >
+      <div>
+        <h2 class="h6 fw-semibold mb-1">{{ slot.label }}</h2>
+        <div class="small text-secondary">{{ slot.hint }}</div>
+      </div>
+
+      <div class="d-flex flex-wrap align-items-center gap-2">
+        @if (slot.ocr) { @if (doc?.progress === 100 && doc?.ocr) { @if
+        (isOcrPassed(doc)) {
+        <span class="badge text-bg-success">OCR passed</span>
+        } @else {
+        <span class="badge text-bg-warning">Needs review</span>
+        }
+        <button
+          type="button"
+          class="btn btn-sm btn-outline-primary"
+          (click)="reviewKind.set(slot.kind)"
+        >
+          Review OCR
+        </button>
+        } @else if (doc?.progress === 100) {
+        <span class="small text-secondary">
+          <span
+            class="spinner-border spinner-border-sm me-1"
+            aria-hidden="true"
+          ></span>
+          Running OCR...
+        </span>
+        } }
+      </div>
+    </div>
+
+    <vadhuvai-document-dropzone
+      [label]="slot.label"
+      [file]="doc?.file ?? null"
+      [progress]="doc?.progress ?? null"
+      (fileSelected)="upload(slot.kind, $event)"
+      (fileRemoved)="remove(slot.kind)"
+    />
+  </div>
+  }
+
+  <div
+    class="d-flex flex-wrap justify-content-between align-items-center gap-3 mt-4"
+  >
+    <a routerLink="/citizen/application" class="btn btn-outline-secondary"
+      >Back to details</a
+    >
+
+    <div class="d-flex flex-wrap align-items-center gap-3">
+      <span class="small text-secondary"
+        >{{ uploadedCount() }} of {{ slots.length }} uploaded</span
+      >
+      @if (!store.canProceedToPayment()) {
+      <span class="small text-secondary"
+        >Both ID proofs must pass OCR before payment</span
+      >
+      }
+      <button
+        type="button"
+        class="btn btn-primary"
+        [disabled]="!store.canProceedToPayment()"
+        (click)="proceed()"
+      >
+        Proceed to Payment
+      </button>
+    </div>
+  </div>
+</section>
+
+@if (reviewKind(); as kind) {
+<app-ocr-review-drawer [kind]="kind" (closed)="reviewKind.set(null)" />
+}

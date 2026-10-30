@@ -1,0 +1,123 @@
+<section class="auth-page mx-auto">
+  <vadhuvai-stepper [steps]="steps" [activeIndex]="0" class="d-block mb-4" />
+
+  <div class="panel p-4 p-md-5">
+    @if (!otpSent()) {
+    <h1 class="h4 fw-semibold mb-1">Citizen sign in</h1>
+    <p class="text-secondary mb-4">
+      Enter your registered mobile number to receive a one-time password.
+    </p>
+
+    <form [formGroup]="phoneForm" (ngSubmit)="requestOtp()" novalidate>
+      <label for="mobile" class="form-label fw-semibold">Mobile number</label>
+      <div class="input-group">
+        <span class="input-group-text">+91</span>
+        <input
+          id="mobile"
+          type="tel"
+          inputmode="numeric"
+          autocomplete="tel-national"
+          maxlength="10"
+          class="form-control"
+          placeholder="10-digit mobile number"
+          formControlName="mobileNumber"
+          aria-describedby="mobile-error"
+          [class.is-invalid]="!!errorOf(phoneForm.controls.mobileNumber)"
+        />
+      </div>
+      @if (errorOf(phoneForm.controls.mobileNumber); as error) {
+      <div id="mobile-error" class="invalid-feedback d-block">{{ error }}</div>
+      }
+
+      <div class="form-check mt-4">
+        <input
+          id="terms"
+          type="checkbox"
+          class="form-check-input"
+          formControlName="acceptTerms"
+        />
+        <label for="terms" class="form-check-label">
+          I agree to the <a href="#terms">Terms of Service</a> and
+          <a href="#privacy-policy">Privacy Policy</a>.
+        </label>
+      </div>
+      @if (errorOf(phoneForm.controls.acceptTerms); as error) {
+      <div class="text-danger small mt-1">{{ error }}</div>
+      }
+
+      <button
+        type="submit"
+        class="btn btn-primary w-100 py-2 mt-4"
+        [disabled]="requesting()"
+      >
+        @if (requesting()) {
+        <span
+          class="spinner-border spinner-border-sm me-2"
+          aria-hidden="true"
+        ></span>
+        Sending OTP... } @else { Request OTP }
+      </button>
+    </form>
+    } @else {
+    <h1 class="h4 fw-semibold mb-1">Verify OTP</h1>
+    <p class="text-secondary mb-4">
+      Enter the 6-digit code sent to {{ maskedMobile }}.
+    </p>
+
+    <form (submit)="$event.preventDefault(); verifyOtp()" novalidate>
+      <label for="otp" class="form-label fw-semibold">One-time password</label>
+      <input
+        #otpInput
+        id="otp"
+        type="text"
+        inputmode="numeric"
+        autocomplete="one-time-code"
+        maxlength="6"
+        class="form-control form-control-lg otp-input text-center"
+        [formControl]="otpControl"
+        (input)="sanitizeOtp($event)"
+        [class.is-invalid]="!!otpError()"
+        aria-describedby="otp-hint"
+      />
+      <p id="otp-hint" class="small text-secondary mt-2 mb-0">
+        Demo OTP: {{ demoOtp }}
+      </p>
+
+      @if (otpError(); as message) {
+      <div class="text-danger small mt-2" role="alert">{{ message }}</div>
+      }
+
+      <button
+        type="submit"
+        class="btn btn-primary w-100 py-2 mt-4"
+        [disabled]="verifying()"
+      >
+        @if (verifying()) {
+        <span
+          class="spinner-border spinner-border-sm me-2"
+          aria-hidden="true"
+        ></span>
+        Verifying... } @else { Verify &amp; Continue }
+      </button>
+    </form>
+
+    <div class="d-flex justify-content-between align-items-center mt-3 small">
+      <button type="button" class="btn btn-link p-0" (click)="changeNumber()">
+        Change number
+      </button>
+      @if (resendIn() === 0) {
+      <button
+        type="button"
+        class="btn btn-link p-0 fw-semibold"
+        [disabled]="requesting()"
+        (click)="requestOtp()"
+      >
+        Resend OTP
+      </button>
+      } @else {
+      <span class="text-secondary">Resend in {{ resendIn() }}s</span>
+      }
+    </div>
+    }
+  </div>
+</section>

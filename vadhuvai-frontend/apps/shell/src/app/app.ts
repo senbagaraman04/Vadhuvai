@@ -1,12 +1,13 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { PortalLanguage, VadhuvaiFooter, VadhuvaiHeader } from '@vadhuvai/shared/ui';
 
 @Component({
-  imports: [RouterModule],
+  imports: [RouterModule, VadhuvaiHeader, VadhuvaiFooter],
   selector: 'app-root',
   templateUrl: './app.html',
   styleUrl: './app.scss',
 })
 export class App {
-  protected title = 'shell';
+  protected readonly language = signal<PortalLanguage>('en');
 }

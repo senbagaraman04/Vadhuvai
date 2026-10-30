@@ -1,0 +1,72 @@
+<div
+  class="dropzone"
+  [class.is-dragging]="isDragging()"
+  (dragover)="onDragOver($event)"
+  (dragleave)="onDragLeave()"
+  (drop)="onDrop($event)"
+>
+  @if (file(); as current) {
+    <div class="d-flex align-items-center gap-3">
+      <div class="thumb" aria-hidden="true">
+        @if (previewUrl(); as url) {
+          <img [src]="url" alt="" />
+        } @else {
+          <span class="fw-bold small">PDF</span>
+        }
+      </div>
+
+      <div class="flex-fill text-body">
+        <p class="mb-1 fw-semibold text-truncate">{{ current.name }}</p>
+        <p class="mb-2 small text-secondary">
+          {{ current.size / 1024 | number: '1.0-0' }} KB &middot;
+          {{ uploaded() ? 'Uploaded' : 'Uploading ' + percent() + '%' }}
+        </p>
+        <div
+          class="progress"
+          role="progressbar"
+          aria-label="Upload progress"
+          [attr.aria-valuenow]="percent()"
+          aria-valuemin="0"
+          aria-valuemax="100"
+        >
+          <div class="progress-bar" [class.bg-success]="uploaded()" [style.width.%]="percent()"></div>
+        </div>
+      </div>
+
+      <div class="d-flex flex-column gap-2">
+        <button type="button" class="btn btn-outline-secondary btn-sm" [attr.aria-expanded]="previewOpen()" (click)="previewOpen.set(!previewOpen())">
+          {{ previewOpen() ? 'Hide preview' : 'Preview' }}
+        </button>
+        <button type="button" class="btn btn-outline-danger btn-sm" (click)="remove()">Remove</button>
+      </div>
+    </div>
+
+    @if (previewOpen()) {
+      <div class="preview-drawer">
+        @if (previewUrl(); as url) {
+          <img [src]="url" [alt]="'Preview of ' + current.name" />
+        } @else {
+          <p class="small text-secondary mb-0">Preview is not available for PDF files. The file is stored for verification.</p>
+        }
+      </div>
+    }
+  } @else {
+    <div class="text-center py-2">
+      <p class="fw-semibold mb-1">{{ label() }}</p>
+      <p class="small text-secondary mb-3">Drag and drop a PDF, JPG or PNG here, up to {{ maxSizeMb() }} MB</p>
+      <button type="button" class="btn btn-outline-primary btn-sm" (click)="openPicker()">Browse files</button>
+      <input
+        #fileInput
+        type="file"
+        class="visually-hidden"
+        accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png"
+        [attr.aria-label]="label()"
+        (change)="onInputChange($event)"
+      />
+    </div>
+  }
+
+  @if (errorMessage(); as message) {
+    <p class="small text-danger mt-2 mb-0" role="alert">{{ message }}</p>
+  }
+</div>

@@ -1,0 +1,9 @@
+@use '../../../../../../shared/ui/src/lib/styles/tokens' as t;
+
+:host {
+  display: block;
+}
+
+.panel {
+  @include t.card-panel;
+}
