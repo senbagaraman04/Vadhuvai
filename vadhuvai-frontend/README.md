@@ -28,17 +28,18 @@ Lint and unit-test targets use the inferred `@nx/eslint/plugin` and
 
 ## Run tasks
 
-To run the shell and citizen portal together, use:
+To run the shell, citizen portal, and SRO dashboard together, use:
 
 ```sh
 npm start
 ```
 
-Open http://localhost:4200/citizen-portal for the shell, or
-http://localhost:4201 for the standalone remote. The shell loads the remote's
-`./Routes` exposure through the `citizen-portal` manifest name.
+Open http://localhost:4200/citizen for the citizen portal in the shell, or
+http://localhost:4201 for its standalone remote. The SRO dashboard is available at
+http://localhost:4200/sro/queue in the shell and http://localhost:4202/sro/queue
+standalone. Both remotes expose `./Routes` through Native Federation.
 
-Without changing your global Node installation, run both using:
+Without changing your global Node installation, run all three using:
 
 ```sh
 npx --yes --package=node@24.16.0 -- npm start
@@ -48,11 +49,41 @@ The runtime remote URL is configured in
 `apps/shell/public/federation.manifest.json`. Replace its localhost URL with the
 deployed remote's `remoteEntry.json` URL for production.
 
-To create both production bundles:
+To create all production bundles:
 
 ```sh
-npx nx run-many -t build -p shell citizen-portal --tui=false
+npm run build
 ```
+
+## SRO Dashboard
+
+Run only the officer remote with `npx nx serve sro-dashboard --tui=false`.
+Run its tests with `npx nx test sro-dashboard --watch=false --tui=false` and
+lint it with `npx nx lint sro-dashboard --tui=false`.
+
+The dashboard uses Bootstrap 5, a paginated queue, and read-only reactive forms
+for submitted particulars. Review actions require remarks, a 64-character
+SHA-256 hexadecimal signature hash, and explicit confirmation. Approval and
+rejection-query outcomes are displayed without silently changing submitted data.
+
+Start the backend on port 8080 with its `sro-dev` profile as described in the
+backend README. Sign in with `sro-officer` and the generated startup password.
+The client first obtains a session-bound CSRF token, then checks officer queue
+access. Basic credentials are held only in memory and cleared on sign-out;
+refreshing the page requires sign-in again. Use HTTPS and a real identity
+provider in production. The development account is not district-scoped.
+
+The shell and SRO dev server proxy `/api/**` to localhost:8080. Production hosting
+must provide the equivalent same-origin reverse proxy. Update federation manifest
+URLs when deploying. No frontend fixtures are used as fallback application data.
+
+Document previews accept authenticated same-origin `/api/v1/sro/` URLs only,
+render JPEG/PNG or PDF blobs, and revoke object URLs when closed. The confidence
+map is keyed by document URL: scores >= 0.9 are green; lower scores are red;
+missing scores are explicitly unavailable. The current backend upload mock does
+not retain evidence, so real reviews show missing-document flags rather than
+invented previews or scores. Document persistence and an officer document-serving
+endpoint are required before actual previews can be supplied by the backend.
 
 To see all available targets to run for a project, run:
 
