@@ -5,5 +5,6 @@ public enum ApplicationState {
     DOCUMENT_VERIFIED,
     PAYMENT_PENDING,
     SLOT_LOCKED,
-    SRO_APPROVED
+    SRO_APPROVED,
+    SRO_QUERY_RAISED
 }

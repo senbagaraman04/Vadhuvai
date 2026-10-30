@@ -1,0 +1,70 @@
+<a routerLink="/sro/queue" class="d-inline-block my-3">Back to Pending Applications</a>
+@if (error()) { <div class="alert alert-danger" role="alert">{{ error() }}</div> }
+@if (notice()) { <div class="alert alert-success" role="status">{{ notice() }} <a routerLink="/sro/queue" class="alert-link">Return to queue</a></div> }
+@if (loading()) { <p class="py-5 text-center" role="status">Loading application review...</p> }
+@if (review(); as payload) {
+  <div class="d-flex flex-wrap align-items-start justify-content-between gap-2 mb-4">
+    <div><h2 class="h4 mb-1">Application Review</h2><p class="sro-app-id text-secondary mb-1">{{ payload.application.applicationId }}</p>
+      <span class="small text-secondary">{{ payload.application.sroDistrict }} / {{ payload.application.appointmentSlot ? (payload.application.appointmentSlot | date:'dd MMM yyyy, h:mm a') : 'Slot unavailable' }}</span></div>
+    <span class="badge" [class.text-bg-warning]="payload.application.status === 'SLOT_LOCKED'" [class.text-bg-success]="payload.application.status === 'SRO_APPROVED'" [class.text-bg-danger]="payload.application.status === 'SRO_QUERY_RAISED'" [class.text-bg-secondary]="!['SLOT_LOCKED', 'SRO_APPROVED', 'SRO_QUERY_RAISED'].includes(payload.application.status)">{{ payload.application.status === 'SLOT_LOCKED' ? 'Awaiting Review' : flagLabel(payload.application.status) }}</span>
+  </div>
+  <div class="row g-4 sro-review-grid">
+    <div class="col-12 col-lg-6">
+      <form [formGroup]="particulars" aria-label="Application particulars">
+        <h3 class="sro-section-title">Groom Particulars</h3>
+        <label class="form-label" for="groom-name">Full Name</label><input id="groom-name" class="form-control mb-3" formControlName="groomName" />
+        <div class="row g-3 mb-4"><div class="col-sm-6"><label class="form-label" for="groom-dob">Date of Birth</label><input id="groom-dob" type="date" class="form-control" formControlName="groomDob" /></div>
+          <div class="col-sm-6"><label class="form-label" for="groom-mobile">Mobile Number</label><input id="groom-mobile" class="form-control" formControlName="groomMobile" /></div></div>
+        <h3 class="sro-section-title">Bride Particulars</h3>
+        <label class="form-label" for="bride-name">Full Name</label><input id="bride-name" class="form-control mb-3" formControlName="brideName" />
+        <div class="row g-3 mb-4"><div class="col-sm-6"><label class="form-label" for="bride-dob">Date of Birth</label><input id="bride-dob" type="date" class="form-control" formControlName="brideDob" /></div>
+          <div class="col-sm-6"><label class="form-label" for="bride-mobile">Mobile Number</label><input id="bride-mobile" class="form-control" formControlName="brideMobile" /></div></div>
+        <h3 class="sro-section-title">Marriage Particulars</h3>
+        <div class="row g-3 mb-3"><div class="col-sm-6"><label class="form-label" for="marriage-date">Marriage Date</label><input id="marriage-date" type="date" class="form-control" formControlName="marriageDate" /></div>
+          <div class="col-sm-6"><label class="form-label" for="sro-district">SRO District</label><input id="sro-district" class="form-control" formControlName="sroDistrict" /></div></div>
+        <label class="form-label" for="venue">Venue</label><textarea id="venue" class="form-control" rows="3" formControlName="venueDetails"></textarea>
+      </form>
+    </div>
+    <aside class="col-12 col-lg-6" aria-label="Document evidence">
+      <h3 class="sro-section-title">Documents &amp; OCR Checks</h3>
+      @if (payload.flags.length) {
+        <div class="alert alert-warning"><h4 class="h6">Review Flags</h4><ul class="mb-0 ps-3">
+          @for (flag of payload.flags; track flag) { <li class="text-capitalize">{{ flagLabel(flag) }}</li> }
+        </ul></div>
+      }
+      @for (url of payload.documentUrls; track url; let index = $index) {
+        <app-sro-document [url]="url" [index]="index" [confidence]="payload.ocrMatchConfidenceScores[url]" />
+      } @empty {
+        <div class="sro-document-empty"><span class="sro-file-mark" aria-hidden="true"></span><h4 class="h6 mt-3">No Documents Available</h4><p class="text-secondary mb-0">Document evidence has not been retained for this application.</p><span class="badge rounded-pill text-bg-secondary mt-3">OCR Confidence Unavailable</span></div>
+      }
+    </aside>
+  </div>
+  <section class="sro-decision mt-4" aria-label="Officer decision">
+    <h3 class="sro-section-title">Officer Decision</h3>
+    @if (payload.reviewedBy) { <p class="text-secondary small">Recorded by {{ payload.reviewedBy }} on {{ payload.reviewedAt | date:'dd MMM yyyy, h:mm a':'UTC' }} UTC</p> }
+    <form [formGroup]="decision" (ngSubmit)="requestDecision(true)">
+      <div class="row g-3"><div class="col-12 col-lg-6"><label class="form-label" for="officer-remarks">Officer Remarks</label>
+        <textarea id="officer-remarks" class="form-control" rows="3" maxlength="2000" formControlName="officerRemarks" [attr.aria-invalid]="decision.controls.officerRemarks.touched && decision.controls.officerRemarks.invalid" aria-describedby="remarks-error"></textarea>
+        @if (decision.controls.officerRemarks.touched && decision.controls.officerRemarks.invalid) { <div id="remarks-error" class="text-danger small mt-1">Enter remarks of up to 2,000 characters.</div> }</div>
+        @if (payload.application.status === 'SLOT_LOCKED') {
+          <div class="col-12 col-lg-6"><label class="form-label" for="signature-hash">Digital Signature Hash</label>
+            <input id="signature-hash" class="form-control font-monospace" formControlName="digitalSignatureHash" maxlength="64" autocomplete="off" spellcheck="false" [attr.aria-invalid]="decision.controls.digitalSignatureHash.touched && decision.controls.digitalSignatureHash.invalid" aria-describedby="hash-error" />
+            @if (decision.controls.digitalSignatureHash.touched && decision.controls.digitalSignatureHash.invalid) { <div id="hash-error" class="text-danger small mt-1">Enter a 64-character hexadecimal SHA-256 hash.</div> }</div>
+        }
+      </div>
+      @if (payload.application.status === 'SLOT_LOCKED') {
+        <div class="sro-action-bar d-flex flex-wrap justify-content-end gap-3 mt-4">
+          <button type="button" class="btn btn-outline-danger" [disabled]="saving()" (click)="requestDecision(false)">Raise Rejection Query</button>
+          <button type="submit" class="btn btn-primary" [disabled]="saving()">Approve Application</button>
+        </div>
+      }
+    </form>
+    @if (confirming() !== null) {
+      <div class="sro-confirm mt-3" role="group" aria-label="Confirm officer decision" aria-live="polite">
+        <strong>{{ confirming() ? 'Approve this application?' : 'Record this rejection query?' }}</strong><p class="small mb-3">The decision will be recorded against your officer account.</p>
+        <div class="d-flex gap-2"><button class="btn btn-sm" [class.btn-primary]="confirming()" [class.btn-danger]="!confirming()" type="button" [disabled]="saving()" (click)="submitDecision()">{{ saving() ? 'Recording...' : 'Confirm Decision' }}</button>
+          <button class="btn btn-sm btn-outline-secondary" type="button" [disabled]="saving()" (click)="confirming.set(null)">Cancel</button></div>
+      </div>
+    }
+  </section>
+}

@@ -15,4 +15,5 @@ public class ApplicationResponseDTO extends ApplicationSubmissionDTO {
     private Boolean ocrVerified;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private LocalDateTime appointmentSlot;
 }

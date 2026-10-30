@@ -1,0 +1,35 @@
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-3 my-4">
+  <div><h2 class="h4 mb-1">Pending Applications</h2><p class="text-secondary mb-0">{{ result()?.totalElements ?? 0 }} awaiting officer review</p></div>
+  <button type="button" class="btn btn-outline-secondary" [disabled]="loading()" (click)="load(result()?.page ?? 0)">Refresh Queue</button>
+</div>
+@if (error()) {
+  <div class="alert alert-danger d-flex flex-wrap align-items-center justify-content-between gap-2" role="alert">{{ error() }}
+    <button class="btn btn-sm btn-outline-danger" type="button" (click)="load(result()?.page ?? 0)">Retry</button></div>
+}
+<div class="table-responsive sro-table" [attr.aria-busy]="loading()">
+  <table class="table table-hover align-middle mb-0">
+    <caption class="visually-hidden">Marriage applications pending SRO review</caption>
+    <thead><tr><th scope="col">App ID</th><th scope="col">Groom Name</th><th scope="col">Bride Name</th><th scope="col">Appointment Slot</th><th scope="col">Status</th><th scope="col">Action</th></tr></thead>
+    <tbody>
+      @if (loading()) { <tr><td colspan="6" class="text-center py-5" role="status">Loading applications...</td></tr> }
+      @else {
+        @for (review of result()?.content ?? []; track review.application.id) {
+          <tr><td class="sro-app-id">{{ review.application.applicationId }}</td>
+            <td>{{ review.application.groomName }}</td><td>{{ review.application.brideName }}</td>
+            <td>{{ review.application.appointmentSlot ? (review.application.appointmentSlot | date:'dd MMM yyyy, h:mm a') : 'Not allocated' }}</td>
+            <td><span class="badge text-bg-warning">Awaiting Review</span></td>
+            <td><a class="btn btn-sm btn-outline-primary" [routerLink]="['/sro/review', review.application.id]" [attr.aria-label]="'Review ' + review.application.applicationId">Review</a></td></tr>
+        } @empty {
+          @if (!error()) { <tr><td colspan="6" class="text-center py-5"><strong class="d-block mb-1">No Pending Applications</strong><span class="text-secondary">All submitted applications have been reviewed.</span></td></tr> }
+        }
+      }
+    </tbody>
+  </table>
+</div>
+@if (result(); as page) {
+  <nav class="d-flex align-items-center justify-content-between gap-3 mt-3" aria-label="Queue pagination">
+    <span class="small text-secondary">Page {{ page.totalPages ? page.page + 1 : 0 }} of {{ page.totalPages }}</span>
+    <div class="btn-group"><button class="btn btn-sm btn-outline-secondary" type="button" [disabled]="loading() || page.page === 0" (click)="load(page.page - 1)">Previous</button>
+      <button class="btn btn-sm btn-outline-secondary" type="button" [disabled]="loading() || page.page + 1 >= page.totalPages" (click)="load(page.page + 1)">Next</button></div>
+  </nav>
+}

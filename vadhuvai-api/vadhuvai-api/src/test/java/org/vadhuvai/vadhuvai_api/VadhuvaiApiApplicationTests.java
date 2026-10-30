@@ -175,9 +175,20 @@ class VadhuvaiApiApplicationTests {
 		.andExpect(jsonPath("$.headerName").value("X-CSRF-TOKEN"));
     }
 
+	@Test
+	void deniesCitizenAndAnonymousAccessToEverySroEndpoint() throws Exception {
+		String id = UUID.randomUUID().toString();
+		mvc.perform(get("/api/v1/sro/queue")).andExpect(status().isForbidden());
+		mvc.perform(get("/api/v1/sro/" + id + "/review")).andExpect(status().isForbidden());
+		mvc.perform(post("/api/v1/sro/" + id + "/decision").with(csrf())
+						.contentType(MediaType.APPLICATION_JSON).content("{}"))
+				.andExpect(status().isForbidden());
+		mvc.perform(get("/api/v1/sro/queue").with(anonymous())).andExpect(status().isUnauthorized());
+	}
+
     @Test
     void allowsOnlyConfiguredFrontendOrigins() throws Exception {
-	for (String origin : new String[]{"http://localhost:4200", "http://localhost:4201"}) {
+	for (String origin : new String[]{"http://localhost:4200", "http://localhost:4201", "http://localhost:4202"}) {
 	    mvc.perform(options(BASE + "/application").with(anonymous()).header("Origin", origin)
 			    .header("Access-Control-Request-Method", "POST")
 				    .header("Access-Control-Request-Headers", "content-type,x-csrf-token,authorization"))
@@ -188,6 +199,85 @@ class VadhuvaiApiApplicationTests {
 			.header("Access-Control-Request-Method", "POST"))
 		.andExpect(status().isForbidden());
     }
+
+	    @Test
+	    @WithMockUser(username = "officer-one", roles = "SRO_OFFICER")
+	    void officerCanReviewApproveAndAuditAnApplication() throws Exception {
+		String id = createLockedApplication();
+		createDraft();
+		mvc.perform(get("/api/v1/sro/queue"))
+			.andExpect(status().isOk()).andExpect(jsonPath("$.totalElements").value(1))
+			.andExpect(jsonPath("$.content[0].application.id").value(id))
+			.andExpect(jsonPath("$.content[0].application.appointmentSlot").isNotEmpty());
+		mvc.perform(get("/api/v1/sro/" + id + "/review"))
+			.andExpect(status().isOk()).andExpect(jsonPath("$.documentUrls").isEmpty())
+			.andExpect(jsonPath("$.ocrMatchConfidenceScores").isEmpty())
+			.andExpect(jsonPath("$.flags").value(org.hamcrest.Matchers.hasItem("DOCUMENTS_UNAVAILABLE")));
+		mvc.perform(post("/api/v1/sro/" + id + "/decision").with(csrf())
+				.contentType(MediaType.APPLICATION_JSON).content(decision(true)))
+			.andExpect(status().isOk()).andExpect(jsonPath("$.application.status").value("SRO_APPROVED"))
+			.andExpect(jsonPath("$.reviewedBy").value("officer-one"))
+			.andExpect(jsonPath("$.reviewedAt").isNotEmpty());
+		MarriageApplication saved = repository.findById(UUID.fromString(id)).orElseThrow();
+		assertThat(saved.getDigitalSignatureHash()).isEqualTo("a".repeat(64));
+		assertThat(saved.getOfficerRemarks()).isEqualTo("Reviewed particulars");
+		mvc.perform(get("/api/v1/sro/queue")).andExpect(jsonPath("$.totalElements").value(0));
+		mvc.perform(post("/api/v1/sro/" + id + "/decision").with(csrf())
+				.contentType(MediaType.APPLICATION_JSON).content(decision(false)))
+			.andExpect(status().isBadRequest());
+	    }
+
+	    @Test
+	    @WithMockUser(roles = "SRO_OFFICER")
+	    void officerCanRaiseRejectionQueryButCannotDecideDrafts() throws Exception {
+		String id = createLockedApplication();
+		mvc.perform(post("/api/v1/sro/" + id + "/decision").with(csrf())
+				.contentType(MediaType.APPLICATION_JSON).content(decision(false)))
+			.andExpect(status().isOk()).andExpect(jsonPath("$.application.status").value("SRO_QUERY_RAISED"));
+		mvc.perform(get("/api/v1/sro/queue")).andExpect(jsonPath("$.totalElements").value(0));
+		String draftId = createDraft().get("id").asText();
+		mvc.perform(post("/api/v1/sro/" + draftId + "/decision").with(csrf())
+				.contentType(MediaType.APPLICATION_JSON).content(decision(true)))
+			.andExpect(status().isBadRequest());
+	    }
+
+	    @Test
+	    @WithMockUser(roles = "SRO_OFFICER")
+	    void validatesOfficerRequestsAndRequiresCsrf() throws Exception {
+		String id = createLockedApplication();
+		mvc.perform(post("/api/v1/sro/" + id + "/decision").with(csrf())
+				.contentType(MediaType.APPLICATION_JSON)
+				.content("{\"officerRemarks\":\"\",\"digitalSignatureHash\":\"bad\",\"approved\":true}"))
+			.andExpect(status().isBadRequest()).andExpect(jsonPath("$.details[0].officerRemarks").exists())
+			.andExpect(jsonPath("$.details[0].digitalSignatureHash").exists());
+		mvc.perform(post("/api/v1/sro/" + id + "/decision").with(csrf())
+				.contentType(MediaType.APPLICATION_JSON)
+				.content("{\"officerRemarks\":\"Review\",\"digitalSignatureHash\":\"" + "a".repeat(64) + "\"}"))
+			.andExpect(status().isBadRequest());
+		mvc.perform(post("/api/v1/sro/" + id + "/decision").with(csrf())
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(decision(true).replace("true", "null")))
+			.andExpect(status().isBadRequest());
+		mvc.perform(post("/api/v1/sro/" + id + "/decision").contentType(MediaType.APPLICATION_JSON).content(decision(true)))
+			.andExpect(status().isForbidden());
+		mvc.perform(get("/api/v1/sro/queue?page=-1")).andExpect(status().isBadRequest());
+		mvc.perform(get("/api/v1/sro/queue?size=101")).andExpect(status().isBadRequest());
+		mvc.perform(get("/api/v1/sro/" + UUID.randomUUID() + "/review")).andExpect(status().isNotFound());
+	    }
+
+	    private String createLockedApplication() throws Exception {
+		String id = createDraft().get("id").asText();
+		verifyDocuments(id);
+		mvc.perform(post(BASE + "/" + id + "/payment").with(csrf())
+				.contentType(MediaType.APPLICATION_JSON).content("{\"paymentReference\":\"EPAY-SRO\"}"))
+			.andExpect(status().isOk());
+		return id;
+	    }
+
+	    private String decision(boolean approved) {
+		return "{\"officerRemarks\":\"Reviewed particulars\",\"digitalSignatureHash\":\""
+			+ "a".repeat(64) + "\",\"approved\":" + approved + "}";
+	    }
 
 	    @Test
 	    void browserCanUseIssuedCsrfTokenForCredentialedSubmission() throws Exception {

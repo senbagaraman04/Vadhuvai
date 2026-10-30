@@ -21,6 +21,7 @@ public class SecurityConfiguration {
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(HttpMethod.POST, "/api/v1/citizen/auth/otp").permitAll()
+                    .requestMatchers("/api/v1/sro/**").hasAuthority("ROLE_SRO_OFFICER")
                         .anyRequest().authenticated())
                 .httpBasic(Customizer.withDefaults())
                 .build();

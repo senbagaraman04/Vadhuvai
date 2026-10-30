@@ -1,0 +1,54 @@
+{
+  "name": "sro-dashboard",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "prefix": "app",
+  "sourceRoot": "apps/sro-dashboard/src",
+  "targets": {
+    "build": {
+      "executor": "@angular-architects/native-federation:build",
+      "defaultConfiguration": "production",
+      "options": { "cacheExternalArtifacts": true, "tsConfig": "apps/sro-dashboard/tsconfig.federation.json" },
+      "configurations": {
+        "production": { "target": "sro-dashboard:esbuild:production" },
+        "development": { "target": "sro-dashboard:esbuild:development", "dev": true }
+      }
+    },
+    "serve": {
+      "executor": "@angular-architects/native-federation:build",
+      "options": {
+        "target": "sro-dashboard:serve-original:development",
+        "tsConfig": "apps/sro-dashboard/tsconfig.federation.json",
+        "cacheExternalArtifacts": true, "rebuildDelay": 500, "dev": true, "devServer": true, "port": 0
+      }
+    },
+    "esbuild": {
+      "executor": "@angular/build:application",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
+      "options": {
+        "outputPath": "dist/apps/sro-dashboard",
+        "index": "apps/sro-dashboard/src/index.html",
+        "browser": "apps/sro-dashboard/src/main.ts",
+        "tsConfig": "apps/sro-dashboard/tsconfig.app.json",
+        "inlineStyleLanguage": "scss",
+        "styles": ["apps/sro-dashboard/src/styles.scss"],
+        "polyfills": ["es-module-shims"]
+      },
+      "configurations": {
+        "production": { "outputHashing": "all", "budgets": [{ "type": "initial", "maximumWarning": "500kb", "maximumError": "1mb" }] },
+        "development": { "optimization": false, "extractLicenses": false, "sourceMap": true }
+      }
+    },
+    "serve-original": {
+      "continuous": true,
+      "executor": "@angular/build:dev-server",
+      "defaultConfiguration": "development",
+      "options": { "port": 4202, "proxyConfig": "proxy.conf.json" },
+      "configurations": {
+        "production": { "buildTarget": "sro-dashboard:esbuild:production" },
+        "development": { "buildTarget": "sro-dashboard:esbuild:development" }
+      }
+    }
+  }
+}

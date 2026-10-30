@@ -1,0 +1,26 @@
+:host { display: block; min-width: 0; color: #17212b; }
+.sro-workspace { max-width: 1440px; margin: auto; padding: 1.5rem; }
+.sro-masthead { padding-block: 0.75rem 1.5rem; border-bottom: 2px solid #273846; }
+.sro-eyebrow { color: #526371; font-size: 0.7rem; font-weight: 700; }
+.sro-nav { padding-block: 1rem; border-bottom: 1px solid #dce2e6; }
+.sro-nav a { color: #3730a3; font-weight: 600; }
+.sro-login { max-width: 380px; margin: 4rem auto; }
+.sro-table { border: 1px solid #dce2e6; border-radius: 6px; background: #fff; }
+.sro-table th { background: #eef2f4; font-size: 0.75rem; white-space: nowrap; padding: 1rem; }
+.sro-table td { padding: 1rem; min-width: 130px; }
+.sro-app-id { max-width: 260px; overflow-wrap: anywhere; font-family: monospace; font-size: 0.8rem; }
+.sro-section-title { font-size: 0.875rem; font-weight: 700; padding-block: 0.65rem; border-bottom: 1px solid #dce2e6; margin-bottom: 1rem; }
+.form-control:disabled { background: #f2f5f6; color: #243543; opacity: 1; }
+.sro-document { border-radius: 6px; overflow: hidden; }
+.sro-document-body { min-height: 260px; background: repeating-linear-gradient(45deg, #f3f5f6, #f3f5f6 8px, #edf0f2 8px, #edf0f2 16px); }
+.sro-document-body img { display: block; width: 100%; height: 360px; object-fit: contain; }
+.sro-document-body iframe { display: block; width: 100%; height: 420px; border: 0; }
+.sro-document-empty { padding: 3rem 1.5rem; text-align: center; border: 1px dashed #b5c1ca; border-radius: 6px; background: #f4f7f8; }
+.sro-file-mark { display: inline-block; width: 36px; height: 46px; border: 2px solid #81919f; border-radius: 3px; background: repeating-linear-gradient(to bottom, transparent 0 8px, #c6d0d7 8px 10px, transparent 10px 15px); }
+.sro-decision { border-top: 2px solid #273846; padding-block: 1rem; }
+.sro-action-bar { border-top: 1px solid #dce2e6; padding-top: 1.25rem; }
+.sro-confirm { border-left: 3px solid #4f46e5; padding: 1rem; background: #eef0ff; }
+.btn-primary { --bs-btn-bg: #4f46e5; --bs-btn-border-color: #4f46e5; --bs-btn-hover-bg: #4338ca; --bs-btn-hover-border-color: #4338ca; }
+.badge { font-weight: 600; white-space: normal; line-height: 1.4; }
+.btn, .form-label { overflow-wrap: anywhere; }
+@media (max-width: 575px) { .sro-workspace { padding: 0.75rem; } .sro-action-bar .btn { flex: 1 1 100%; } .sro-masthead h1 { font-size: 1.25rem; } }

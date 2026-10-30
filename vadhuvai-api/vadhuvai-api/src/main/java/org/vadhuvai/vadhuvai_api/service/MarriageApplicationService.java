@@ -59,9 +59,10 @@ public class MarriageApplicationService {
         application.setStatus(ApplicationState.PAYMENT_PENDING);
         repository.saveAndFlush(application);
         application.setStatus(ApplicationState.SLOT_LOCKED);
+        application.setAppointmentSlot(LocalDate.now().plusDays(7).atTime(10, 0));
         MarriageApplication saved = repository.saveAndFlush(application);
         AppointmentSlipDTO slip = new AppointmentSlipDTO("MOCK-" + id, saved.getApplicationId(),
-                paymentReference, saved.getSroDistrict(), LocalDate.now().plusDays(7).atTime(10, 0), true);
+            paymentReference, saved.getSroDistrict(), saved.getAppointmentSlot(), true);
         return new PaymentResponseDTO(toResponse(saved), slip);
     }
 

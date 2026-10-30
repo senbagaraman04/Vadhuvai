@@ -8,6 +8,11 @@ export const appRoutes: Route[] = [
 		loadComponent: () => import('./landing').then((module) => module.Landing),
 	},
 {
+		path: 'sro',
+		loadChildren: () =>
+			loadRemoteModule('sro-dashboard', './Routes').then((m) => m.routes),
+	},
+	{
     path: 'citizen',
     loadChildren: () =>
       loadRemoteModule('citizen-portal', './Routes').then((m) => m.routes),

@@ -1,3 +1,4 @@
 {
-	"citizen-portal": "http://localhost:4201/remoteEntry.json"
+	"citizen-portal": "http://localhost:4201/remoteEntry.json",
+	"sro-dashboard": "http://localhost:4202/remoteEntry.json"
 }

@@ -59,6 +59,14 @@ public class MarriageApplication {
     private LocalDateTime createdAt;
     @Column(nullable = false)
     private LocalDateTime updatedAt;
+    private LocalDateTime appointmentSlot;
+    @Column(length = 2000)
+    private String officerRemarks;
+    @Column(length = 64)
+    private String digitalSignatureHash;
+    @Column(length = 150)
+    private String reviewedBy;
+    private LocalDateTime reviewedAt;
 
     @PrePersist
     void onCreate() {
